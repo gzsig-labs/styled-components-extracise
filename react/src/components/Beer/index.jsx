@@ -9,76 +9,56 @@ import {
   Date,
   Description,
   ContributedBy,
-  Paragraph
 } from './styles';
+import AppContext from '../../context/AppContext';
 
 class Beer extends Component {
   componentDidMount() {
-    if (this.props.match) {
-      const id = this.props.match.params.id;
-      return this.props.handleBeer(id);
+    const { id } = this.props.match.params
+    console.log(this.props);
+    
+    if (id) {
+      return this.context.searchBeer(id);
     } else {
-      return this.props.handleBeer();
+      return this.context.searchRandomBeer();
     }
   }
 
   componentWillUnmount() {
-    this.props.clearBeer();
+    this.context.clearBeer();
   }
 
   render() {
     return (
-      <React.Fragment>
-        <this.props.NavBar />
-        {Object.entries(this.props.beer).length === 0 ? (
-          <p>Carregando</p>
-        ) : (
-          <StyledBeer>
-            <StyledImage
-              src={this.props.beer.image_url}
-              alt={this.props.beer.name}
-            />
-            <StyledDiv>
-              <Title>{this.props.beer.name}</Title>
-              <Attenuation>{this.props.beer.attenuation_level}</Attenuation>
-            </StyledDiv>
-            <StyledDiv>
-              <Tagline>{this.props.beer.tagline}</Tagline>
-              <Date>{this.props.beer.first_brewed}</Date>
-            </StyledDiv>
-            <Description>{this.props.beer.description}</Description>
-            <ContributedBy>{this.props.beer.contributed_by}</ContributedBy>
-          </StyledBeer>
-          // <StyledBeer>
-          //   <StyledImage
-          //     src={this.props.beer.image_url}
-          //     alt={this.props.beer.name}
-          //   />
-          //   <StyledDiv>
-          //     <Title>{this.props.beer.name}</Title>
-          //     <Paragraph color='lightgray' size='20px'>
-          //       {this.props.beer.attenuation_level}
-          //     </Paragraph>
-          //   </StyledDiv>
-          //   <StyledDiv>
-          //     <Paragraph color='lightgray' size='15px'>
-          //       {this.props.beer.tagline}
-          //     </Paragraph>
-          //     <Paragraph color='black' size='15px' weight='bold'>
-          //       {this.props.beer.first_brewed}
-          //     </Paragraph>
-          //   </StyledDiv>
-          //   <Paragraph color='black' size='15px' weight='bold'>
-          //     {this.props.beer.description}
-          //   </Paragraph>
-          //   <Paragraph color='lightgray' size='15px' weight='bold'>
-          //     {this.props.beer.contributed_by}
-          //   </Paragraph>
-          // </StyledBeer>
+      <AppContext.Consumer>
+        {(context) => (
+          <React.Fragment>
+            <context.NavBar />
+            {Object.entries(context.state.chosenBeer).length === 0 ? (
+              <p>Carregando</p>
+            ) : (
+                <StyledBeer>
+                  <StyledImage
+                    src={context.state.chosenBeer.image_url}
+                    alt={context.state.chosenBeer.name}
+                  />
+                  <StyledDiv>
+                    <Title>{context.state.chosenBeer.name}</Title>
+                    <Attenuation>{context.state.chosenBeer.attenuation_level}</Attenuation>
+                  </StyledDiv>
+                  <StyledDiv>
+                    <Tagline>{context.state.chosenBeer.tagline}</Tagline>
+                    <Date>{context.state.chosenBeer.first_brewed}</Date>
+                  </StyledDiv>
+                  <Description>{context.state.chosenBeer.description}</Description>
+                  <ContributedBy>{context.state.chosenBeer.contributed_by}</ContributedBy>
+                </StyledBeer>
+              )}
+          </React.Fragment>
         )}
-      </React.Fragment>
+      </AppContext.Consumer>
     );
   }
 }
-
+Beer.contextType = AppContext;
 export default Beer;
